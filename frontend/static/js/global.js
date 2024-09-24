@@ -22,4 +22,4 @@ window.ajax = {
         });
         xhr.send(JSON.stringify(data));
     }
-};
+}
