@@ -23,3 +23,9 @@ window.ajax = {
         xhr.send(JSON.stringify(data));
     }
 }
+
+function htmlToElement(html) {
+    const fatherDiv = document.createElement('div');
+    fatherDiv.innerHTML = html;
+    return fatherDiv.children[0];
+}

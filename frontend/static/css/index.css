@@ -21,20 +21,44 @@ h1 {
 }
 
 #file_list .file {
-    display: block;
+    display: flex;
+    /*position: relative;*/
     padding: 10px 20px;
     background-color: #cce7f9;
     border: 1px solid #c6d3df;
     text-decoration: none;
-    color: #000000;
-    word-break: break-all;
 }
 
 #file_list .file:nth-of-type(n + 2) {
     border-top-width: 0;
 }
 
+#file_list .file .icon {
+    align-self: center;
+    /*position: absolute;*/
+    /*left: 20px;*/
+    /*top: 9px;*/
+    width: 25px;
+    height: 25px;
+    fill: #2b86db;
+}
+
+#file_list .file .filename {
+    flex: 1;
+    padding-left: 14px;
+    color: #000000;
+    word-break: break-all;
+    line-height: 24px;
+}
+
 #file_list .file:hover {
     background-color: #2b86db;
+}
+
+#file_list .file:hover .icon {
+    fill: #ebeae7;
+}
+
+#file_list .file:hover .filename {
     color: #eaeaea;
 }
