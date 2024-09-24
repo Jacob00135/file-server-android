@@ -1,0 +1,9 @@
+body {
+    padding-top: 50px;
+}
+
+#file_list .empty-hint-text {
+    font-weight: 700;
+    font-size: 22px;
+    text-align: center;
+}
