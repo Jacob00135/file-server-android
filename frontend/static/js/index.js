@@ -6,15 +6,16 @@
         ajax.getJson('/api/index', (response) => {
             renderContent(response['files']);
         });
+
         renderContent([
             'C:\\',
             'D:\\',
             'E:\\',
             'C:\\Users\\504-Jiyue-Xie\\Desktop\\multimodal_guiyi',
-            'E:\\Music',
             'D:\\EvaluationExperiment',
             'D:\\桂医课程项目\\CPGGBDT',
-            'D:\\文档\\PPT模板'
+            'D:\\文档\\PPT模板',
+            'E:\\Music',
         ]);
     }
 
