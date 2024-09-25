@@ -1,8 +1,7 @@
 package routes
 
 import (
-	"database/sql"
-	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -18,7 +17,9 @@ func SetupFileRoutes(app *fiber.App) {
 	// 下载文件
 	app.Get("/download/:filename", downloadFile)
 
-	app.Get("/api/index", ListFilesNew)
+	app.Get("/api/index", ListIndexs)
+
+	// app.Get("/api/", ListFiles)
 }
 
 func uploadFile(c fiber.Ctx) error {
@@ -77,8 +78,7 @@ func downloadFile(c fiber.Ctx) error {
 	return c.SendFile(fullPath)
 }
 
-func ListFilesNew(c fiber.Ctx) error {
-
+func ListIndexs(c fiber.Ctx) error {
 	// auth check
 	sess, err := database.Storage.Get(c)
 	if err != nil {
@@ -103,26 +103,84 @@ func ListFilesNew(c fiber.Ctx) error {
 		}
 	}
 
-	files, err := database.DB.GetDirsByPermission(userPermission)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": err.Error(),
+	dir := c.Query("visible_dir")
+	dir = filepath.Clean(dir)
+	// todo: check dir is valid
+	if dir != "" {
+		path := c.Query("path")
+		if path == "" {
+			ok := osFileExists(dir)
+			if !ok {
+				return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+					"message": "Path not found",
+				})
+			}
+
+			files, err := func() ([]string, error) {
+				entries, err := os.ReadDir(dir)
+				var names []string
+				for _, entry := range entries {
+					names = append(names, entry.Name())
+				}
+				return names, err
+			}()
+			if err != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"message": fmt.Sprintf("Could not read directory: %v", err.Error()),
+				})
+			}
+
+			return c.JSON(fiber.Map{
+				"father": dir,
+				"files":  files,
+			})
+		} else {
+			path = filepath.Clean(path)
+			target := filepath.Join(dir, path)
+			ok := osFileExists(target)
+			if !ok {
+				return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+					"message": "Path not found",
+				})
+			}
+
+			files, err := func() ([]string, error) {
+				entries, err := os.ReadDir(target)
+				var names []string
+				for _, entry := range entries {
+					names = append(names, entry.Name())
+				}
+				return names, err
+			}()
+			if err != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"message": fmt.Sprintf("Could not read directory: %v", err.Error()),
+				})
+			}
+
+			return c.JSON(fiber.Map{
+				"father": target,
+				"files":  files,
+			})
+		}
+	} else {
+		files, err := database.DB.GetDirsByPermission(userPermission)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": err.Error(),
+			})
+		}
+
+		return c.JSON(fiber.Map{
+			"father": "",
+			"files":  files,
 		})
 	}
-
-	return c.JSON(fiber.Map{
-		"files": files,
-	})
 }
 
-func checkFileExists(path string) (bool, error) {
-	_, err := database.DB.Conn.Query("SELECT 1 FROM directory WHERE directorypath = ?", path)
-	if err == nil {
-		return true, nil
-	} else if errors.Is(err, sql.ErrNoRows) {
-		return false, nil
-	}
-	return false, err
+func osFileExists(path string) bool {
+	_, err := os.Stat(path)
+	return !os.IsNotExist(err)
 }
 
 // func insertFileTable(filePath string) (id int, permission int, err error) {
