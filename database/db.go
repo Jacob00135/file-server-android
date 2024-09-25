@@ -29,7 +29,7 @@ func InitDB() {
 	}
 
 	dbPath := os.Getenv("DB_PATH")
-	HOME := os.Getenv("TEST_ROOT")
+	HOME := os.Getenv("HOME")
 
 	conn, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
