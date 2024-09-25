@@ -49,3 +49,13 @@ function parseSearchParams() {
 
     return result;
 }
+
+function connectPath(path1, path2) {
+    if (path1.endsWith('/')) {
+        path1 = path1.slice(0, path1.length - 1);
+    }
+    if (path2.startsWith('/')) {
+        path2 = path2.slice(1, path2.length);
+    }
+    return path1 + '/' + path2;
+}
