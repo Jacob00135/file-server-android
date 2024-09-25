@@ -2,8 +2,59 @@ body {
     padding-top: 50px;
 }
 
+h1 {
+    text-align: center;
+    font-weight: 400;
+}
+
+#file_list {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1);
+}
+
 #file_list .empty-hint-text {
     font-weight: 700;
     font-size: 22px;
     text-align: center;
+}
+
+#file_list .file {
+    display: flex;
+    padding: 10px 20px;
+    background-color: #cce7f9;
+    border: 1px solid #c6d3df;
+    text-decoration: none;
+}
+
+#file_list .file:nth-of-type(n + 2) {
+    border-top-width: 0;
+}
+
+#file_list .file .icon {
+    align-self: center;
+    width: 25px;
+    height: 25px;
+    fill: #2b86db;
+}
+
+#file_list .file .filename {
+    flex: 1;
+    padding-left: 14px;
+    color: #000000;
+    word-break: break-all;
+    line-height: 25px;
+}
+
+#file_list .file:hover {
+    background-color: #2b86db;
+}
+
+#file_list .file:hover .icon {
+    fill: #ebeae7;
+}
+
+#file_list .file:hover .filename {
+    color: #eaeaea;
 }
