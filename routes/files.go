@@ -105,8 +105,8 @@ func ListIndexs(c fiber.Ctx) error {
 
 	dir := c.Query("visible_dir")
 	dir = filepath.Clean(dir)
-	// todo: check dir is valid
-	if dir != "" {
+
+	if dir != "." {
 		path := c.Query("path")
 		if path == "" {
 			ok := osFileExists(dir)

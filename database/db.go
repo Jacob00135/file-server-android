@@ -4,10 +4,12 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+	"os"
 	"path/filepath"
 
 	"github.com/Jacob00135/file-server-android/models"
 	"github.com/gofiber/fiber/v3/middleware/session"
+	"github.com/joho/godotenv"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -21,7 +23,15 @@ var DB *Database
 var Storage *session.Store
 
 func InitDB() {
-	conn, err := sql.Open("sqlite3", "./filesystem.db")
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	dbPath := os.Getenv("DB_PATH")
+	HOME := os.Getenv("TEST_ROOT")
+
+	conn, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,7 +81,7 @@ func InitDB() {
 		}
 	}
 
-	err = DB.InsertDir(`D:\桌面\file-server-android`, 1)
+	err = DB.InsertDir(HOME, 1)
 	if err != nil {
 		log.Fatal(err)
 	}
