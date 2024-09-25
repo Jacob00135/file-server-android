@@ -29,3 +29,23 @@ function htmlToElement(html) {
     fatherDiv.innerHTML = html;
     return fatherDiv.children[0];
 }
+
+function parseSearchParams() {
+    let search = location.search;
+    if (search === '' || search === '?') {
+        return {}
+    }
+    search = search.slice(1);
+
+    const params = search.split('&');
+    const result = {};
+    for (let i = 0; i < params.length; i++) {
+        let param = params[i];
+        let index = param.indexOf('=');
+        let key = param.slice(0, index);
+        let value = param.slice(index + 1);
+        result[key] = value;
+    }
+
+    return result;
+}

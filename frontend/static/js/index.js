@@ -3,7 +3,7 @@
     main();
 
     function main() {
-        ajax.getJson('/api/index', (response) => {
+        ajax.getJson(`/api/index${location.search}`, (response) => {
             renderContent(response['files']);
         });
 
