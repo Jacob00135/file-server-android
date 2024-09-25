@@ -6,17 +6,6 @@
         ajax.getJson(`/api/index${location.search}`, (response) => {
             renderContent(response['files']);
         });
-
-        renderContent([
-            'C:\\',
-            'D:\\',
-            'E:\\',
-            'C:\\Users\\504-Jiyue-Xie\\Desktop\\multimodal_guiyi',
-            'D:\\EvaluationExperiment',
-            'D:\\桂医课程项目\\CPGGBDT',
-            'D:\\文档\\PPT模板',
-            'E:\\Music',
-        ]);
     }
 
     function renderContent(filenames) {
