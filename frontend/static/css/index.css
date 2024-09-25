@@ -22,7 +22,6 @@ h1 {
 
 #file_list .file {
     display: flex;
-    /*position: relative;*/
     padding: 10px 20px;
     background-color: #cce7f9;
     border: 1px solid #c6d3df;
@@ -35,9 +34,6 @@ h1 {
 
 #file_list .file .icon {
     align-self: center;
-    /*position: absolute;*/
-    /*left: 20px;*/
-    /*top: 9px;*/
     width: 25px;
     height: 25px;
     fill: #2b86db;
