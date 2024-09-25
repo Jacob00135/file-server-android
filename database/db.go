@@ -93,6 +93,7 @@ func (db *Database) Connect(dbPath string) {
 		return
 	}
 	conn, err := sql.Open("sqlite3", dbPath)
+
 	if err != nil {
 		log.Fatal(err)
 	}
