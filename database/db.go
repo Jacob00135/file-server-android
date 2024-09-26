@@ -29,7 +29,7 @@ func InitDB() {
 	}
 
 	dbPath := os.Getenv("DB_PATH")
-	HOME := os.Getenv("HOME")
+	fileHome := os.Getenv("FILE_HOME")
 
 	conn, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
@@ -81,7 +81,7 @@ func InitDB() {
 		}
 	}
 
-	err = DB.InsertDir(HOME, 1)
+	err = DB.InsertDir(fileHome, 1)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -124,7 +124,7 @@ func (db *Database) InsertDir(path string, p int) error {
 	return err
 }
 
-func (db *Database) GetDirsByPermission(p int) ([]string, error) {
+func (db *Database) GetDirsByPermission(p uint) ([]models.File, error) {
 	if db.Conn == nil {
 		return nil, errors.New("database connection is not open")
 	}
@@ -134,19 +134,23 @@ func (db *Database) GetDirsByPermission(p int) ([]string, error) {
 	}
 	defer rows.Close()
 
-	var paths []string
+	var files []models.File
 	for rows.Next() {
 		var path string
 		if err := rows.Scan(&path); err != nil {
 			return nil, err
 		}
-		paths = append(paths, path)
+		files = append(files, models.File{
+			Name:     path,
+			FileType: true,
+			FileSize: 0,
+		})
 	}
 
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
-	return paths, nil
+	return files, nil
 }
 
 func (db *Database) CheckUserExists(username string) (bool, error) {
@@ -201,7 +205,7 @@ func (db *Database) getFileInfo(path string) (*models.DbFile, error) {
 	return file, nil
 }
 
-func (db *Database) GetUserPermission(username string) (int, error) {
+func (db *Database) GetUserPermission(username string) (uint, error) {
 	user, err := db.getUserInfo(username)
 	if err != nil {
 		return 0, err
@@ -209,7 +213,7 @@ func (db *Database) GetUserPermission(username string) (int, error) {
 	return user.Permission, nil
 }
 
-func (db *Database) GetFilePermission(path string) (int, error) {
+func (db *Database) GetFilePermission(path string) (uint, error) {
 	file, err := db.getFileInfo(path)
 	if err != nil {
 		return 0, err

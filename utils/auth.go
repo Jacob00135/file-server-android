@@ -5,7 +5,7 @@ import (
 )
 
 func CheckUserFilePermission(username, path string) (bool, error) {
-	user := 1
+	var user uint = 1
 	if username != "" {
 		var err error
 		user, err = database.DB.GetUserPermission(username)

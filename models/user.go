@@ -1,10 +1,10 @@
 package models
 
 type User struct {
-	ID         int    `json:"id"`
+	ID         uint   `json:"id"`
 	Username   string `json:"username"`
 	Password   string `json:"password"`
-	Permission int    `json:"permission"`
+	Permission uint   `json:"permission"`
 }
 
 type UserInput struct {

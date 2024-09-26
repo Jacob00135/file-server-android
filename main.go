@@ -3,23 +3,26 @@ package main
 import (
 	"log"
 
+	"github.com/bytedance/sonic"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/static"
 	"github.com/gofiber/template/html/v2"
 
-	"github.com/Jacob00135/file-server-android/database"
+	db "github.com/Jacob00135/file-server-android/database"
 	"github.com/Jacob00135/file-server-android/routes"
 )
 
 func main() {
 	// Connect to the database
-	database.InitDB()
-	defer database.DB.Close()
+	db.InitDB()
+	defer db.DB.Close()
 
 	// Initialize a new Fiber app
 	engin := html.New("./frontend/html", ".html")
 	app := fiber.New(fiber.Config{
-		Views: engin,
+		JSONEncoder: sonic.Marshal,
+		JSONDecoder: sonic.Unmarshal,
+		Views:       engin,
 	})
 
 	app.Get("/static/*", static.New("./frontend/static"))
