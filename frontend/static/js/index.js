@@ -51,6 +51,7 @@
         let hrefTemplate;
         if (visibleDir === undefined && path === undefined) {
             // 场景1
+            document.getElementById('sort-btn').remove();
             hrefTemplate = (filename) => { return `/?visible_dir=${filename}` };
         } else if (visibleDir !== undefined && path === undefined) {
             // 场景2
@@ -216,8 +217,7 @@
 
     function submitSortSelectEvent(e) {
         const by = document.querySelector('#sort-dialog .select-widget select.by').value;
-        let reversed = document.querySelector('#sort-dialog .select-widget select.reversed:not(.hidden)').value === '1';
-        console.log(by, reversed);
+        const reversed = document.querySelector('#sort-dialog .select-widget select.reversed:not(.hidden)').value === '1';
 
         renderContent(fatherDir, sortFiles(pageFiles, by, reversed))
 
