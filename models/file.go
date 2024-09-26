@@ -1,15 +1,13 @@
 package models
 
 type File struct {
-	ID         int    `json:"id"`
-	Path       string `json:"path"`
-	Permission int    `json:"permission"` // 例如: "read,write"
-	FileType   string `json:"type"`       // 例如: "file" 或 "directory"
-	FileSize   int    `json:"size"`
+	Name     string `json:"filename"`
+	FileType bool   `json:"is_dir"`
+	FileSize int64  `json:"size"`
 }
 
 type DbFile struct {
-	ID         int
+	ID         uint
 	Path       string
-	Permission int
+	Permission uint
 }

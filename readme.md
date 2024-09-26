@@ -2,5 +2,5 @@
 
 ```
 DB_PATH=[database path]
-Home=[Home file path]
+HOME=[Home file path]
 ```
