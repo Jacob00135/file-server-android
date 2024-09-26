@@ -11,29 +11,33 @@
         document.querySelector('#sort-dialog .btn-group .submit').addEventListener('click', submitSortSelectEvent);
         document.querySelector('#sort-dialog .btn-group .close').addEventListener('click', closeSortDialog);
 
-        // ajax.getJson(`/api/index${location.search}`, (response) => {
-        //     renderContent(response['father'], response['files']);
-        // });
-        const response = {
-            "father": "/root/file-server-android",
-            "files": [
-                {"filename": "ab.mp3", "is_dir": false, "size": 24576},
-                {"filename": "frontend", "is_dir": true, "size": 0},
-                {"filename": "database", "is_dir": true, "size": 2049},
-                {"filename": ".env", "is_dir": false, "size": 59},
-                {"filename": "filename", "is_dir": false, "size": 59},
-                {"filename": "filename.txt", "is_dir": false, "size": 100},
-                {"filename": "filename.zip", "is_dir": false, "size": 2457622},
-                {"filename": "filename.mp4", "is_dir": false, "size": 245761024},
-                {"filename": "655.jpg", "is_dir": false, "size": 24576}
-            ]
-        }
+        ajax.getJson(`/api/index${location.search}`, (response) => {
+            fatherDir = response['father'];
+            pageFiles = response['files'];
+            pageFiles = sortFiles(pageFiles);
 
-        fatherDir = response['father'];
-        pageFiles = response['files'];
-        pageFiles = sortFiles(pageFiles);
+            renderContent(fatherDir, pageFiles);
+        });
+        // const response = {
+        //     "father": "/root/file-server-android",
+        //     "files": [
+        //         {"filename": "ab.mp3", "is_dir": false, "size": 24576},
+        //         {"filename": "frontend", "is_dir": true, "size": 0},
+        //         {"filename": "database", "is_dir": true, "size": 2049},
+        //         {"filename": ".env", "is_dir": false, "size": 59},
+        //         {"filename": "filename", "is_dir": false, "size": 59},
+        //         {"filename": "filename.txt", "is_dir": false, "size": 100},
+        //         {"filename": "filename.zip", "is_dir": false, "size": 2457622},
+        //         {"filename": "filename.mp4", "is_dir": false, "size": 245761024},
+        //         {"filename": "655.jpg", "is_dir": false, "size": 24576}
+        //     ]
+        // }
 
-        renderContent(fatherDir, pageFiles);
+        // fatherDir = response['father'];
+        // pageFiles = response['files'];
+        // pageFiles = sortFiles(pageFiles);
+        //
+        // renderContent(fatherDir, pageFiles);
     }
 
     function renderContent(fatherDir, files) {
