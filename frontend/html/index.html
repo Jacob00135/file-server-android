@@ -16,6 +16,42 @@
 
 <h1>文件系统</h1>
 
+<div id="overlay" class="hidden"></div>
+<dialog open id="sort-dialog" class="hidden">
+    <h2 class="title">排序</h2>
+    <div class="select-widget">
+        <span class="text">依据</span>
+        <select class="by">
+            <option value="type" data-control="type">类型</option>
+            <option value="name" data-control="name">名称</option>
+            <option value="size" data-control="size">大小</option>
+        </select>
+    </div>
+    <div class="select-widget">
+        <span class="text">顺序</span>
+        <select class="reversed" data-control="type">
+            <option value="0">顺序</option>
+            <option value="1">逆序</option>
+        </select>
+        <select class="reversed hidden" data-control="name">
+            <option value="0">A-Z</option>
+            <option value="1">Z-A</option>
+        </select>
+        <select class="reversed hidden" data-control="size">
+            <option value="0">从小到大</option>
+            <option value="1">从大到小</option>
+        </select>
+    </div>
+    <div class="btn-group">
+        <button type="button" class="submit">确定</button>
+        <button type="button" class="close">取消</button>
+    </div>
+</dialog>
+
+<div id="top-btn-group">
+    <button type="button" id="sort-btn" class="btn">排序</button>
+</div>
+
 <div id="file_list">
     <div class="empty-hint-text">没有文件</div>
 </div>
