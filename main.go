@@ -8,7 +8,9 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/static"
 	"github.com/gofiber/template/html/v2"
 
+	"github.com/Jacob00135/file-server-android/controllers"
 	db "github.com/Jacob00135/file-server-android/database"
+	"github.com/Jacob00135/file-server-android/middleware"
 	"github.com/Jacob00135/file-server-android/routes"
 )
 
@@ -29,11 +31,17 @@ func main() {
 
 	// app.Get("/frontend/js", static.New("frontend/js"))
 
-	app.Get("/", func(c fiber.Ctx) error {
-		return c.Render("index", fiber.Map{
-			"Title": "Welcome to Home Page",
-		})
-	})
+	// app.Get("/", func(c fiber.Ctx) error {
+	// 	return c.Render("index", fiber.Map{
+	// 		"Title": "Welcome to Home Page",
+	// 	})
+	// })
+
+	// app.Get("/", func(c fiber.Ctx) error {
+	// 	return c.SendFile("frontend/html/index.html")
+	// })
+
+	app.Get("/", controllers.WebIndex, middleware.FileAuth)
 
 	// Define a route for the GET method on the root path '/'
 	// app.Get("/", func(c fiber.Ctx) error {
@@ -41,9 +49,7 @@ func main() {
 	// 	return c.SendString("Welcome file server👋!")
 	// })
 
-	routes.SetupFileRoutes(app)
-	routes.SetupRegisterRoutes(app)
-	routes.SetupLoginRoutes(app)
+	routes.Setup(app)
 
 	// Start the server on port 3000
 	log.Fatal(app.Listen("0.0.0.0:9527"))
