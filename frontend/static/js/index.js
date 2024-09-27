@@ -11,16 +11,16 @@
         document.querySelector('#sort-dialog .btn-group .submit').addEventListener('click', submitSortSelectEvent);
         document.querySelector('#sort-dialog .btn-group .close').addEventListener('click', closeSortDialog);
 
-        ajax.getJson(`/api/index${location.search}`, (response) => {
-            fatherDir = response['father'];
-            pageFiles = response['files'];
-            pageFiles = sortFiles(pageFiles);
+        // ajax.getJson(`/api/index${location.search}`, (response) => {
+        //     fatherDir = response['father'];
+        //     pageFiles = response['files'];
+        //     pageFiles = sortFiles(pageFiles);
+        //
+        //     renderContent(fatherDir, pageFiles);
+        // });
 
-            renderContent(fatherDir, pageFiles);
-        });
-
-        // 测试用代码
-        /*const response = {
+        // region 测试用代码
+        const response = {
             "father": "/root/file-server-android",
             "files": [
                 {"filename": "ab.mp3", "is_dir": false, "size": 24576},
@@ -39,7 +39,8 @@
         pageFiles = response['files'];
         pageFiles = sortFiles(pageFiles);
 
-        renderContent(fatherDir, pageFiles);*/
+        renderContent(fatherDir, pageFiles);
+        // endregion
     }
 
     function renderContent(fatherDir, files) {
@@ -55,10 +56,12 @@
             // 场景1
             document.getElementById('sort-btn').classList.add('hidden');
             document.querySelector('#file_list .up-level').classList.add('hidden');
+            document.getElementById('current-location').classList.add('hidden');
             hrefTemplate = (filename) => { return `/?visible_dir=${filename}` };
         } else if (visibleDir !== undefined && path === undefined) {
             // 场景2
             document.querySelector('#file_list .up-level').href = '/';
+            document.getElementById('current-location').textContent = fatherDir;
             hrefTemplate = (filename) => { return `/?visible_dir=${fatherDir}&path=${filename}` };
         } else if (visibleDir !== undefined && path !== undefined) {
             // 场景3
@@ -66,6 +69,7 @@
             const href1 = `/?visible_dir=${visibleDir}&path=${getUpLevelPath(path)}`;
             const href2 = `/?visible_dir=${visibleDir}`;
             document.querySelector('#file_list .up-level').href = isMultiLevelPath ? href1 : href2;
+            document.getElementById('current-location').textContent = fatherDir;
             hrefTemplate = (filename) => { return `/?visible_dir=${visibleDir}&path=${connectPath(path, filename)}` };
         } else {
             return undefined;

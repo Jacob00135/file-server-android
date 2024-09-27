@@ -7,6 +7,14 @@ h1 {
     font-weight: 400;
 }
 
+#current-location {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 10px 0 10px 20px;
+}
+
 /* region 模态框 */
 #overlay {
     position: fixed;
