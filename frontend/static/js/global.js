@@ -163,3 +163,22 @@ function getHumanFileSize(size) {
     }
     return size.toFixed(2) + ' ' + unitArray[i];
 }
+
+function getUpLevelPath(abspath) {
+    abspath = abspath.replace(/\\/g, '/');
+    if (abspath.endsWith('/')) {
+        abspath = abspath.slice(0, abspath.length - 1);
+    }
+    const i = abspath.lastIndexOf('/');
+
+    return i <= 0 ? abspath : abspath.slice(0, i);
+}
+
+function inArray(value, array) {
+    for (let i = 0; i < array.length; i++) {
+        if (array[i] === value) {
+            return true;
+        }
+    }
+    return false;
+}

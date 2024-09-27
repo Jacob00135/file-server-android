@@ -18,26 +18,29 @@
 
             renderContent(fatherDir, pageFiles);
         });
-        // const response = {
-        //     "father": "/root/file-server-android",
-        //     "files": [
-        //         {"filename": "ab.mp3", "is_dir": false, "size": 24576},
-        //         {"filename": "frontend", "is_dir": true, "size": 0},
-        //         {"filename": "database", "is_dir": true, "size": 2049},
-        //         {"filename": ".env", "is_dir": false, "size": 59},
-        //         {"filename": "filename", "is_dir": false, "size": 59},
-        //         {"filename": "filename.txt", "is_dir": false, "size": 100},
-        //         {"filename": "filename.zip", "is_dir": false, "size": 2457622},
-        //         {"filename": "filename.mp4", "is_dir": false, "size": 245761024},
-        //         {"filename": "655.jpg", "is_dir": false, "size": 24576}
-        //     ]
-        // }
 
-        // fatherDir = response['father'];
-        // pageFiles = response['files'];
-        // pageFiles = sortFiles(pageFiles);
-        //
-        // renderContent(fatherDir, pageFiles);
+        // region 测试用代码
+        /*const response = {
+            "father": "/root/file-server-android",
+            "files": [
+                {"filename": "ab.mp3", "is_dir": false, "size": 24576},
+                {"filename": "frontend", "is_dir": true, "size": 0},
+                {"filename": "database", "is_dir": true, "size": 2049},
+                {"filename": ".env", "is_dir": false, "size": 59},
+                {"filename": "filename", "is_dir": false, "size": 59},
+                {"filename": "filename.txt", "is_dir": false, "size": 100},
+                {"filename": "filename.zip", "is_dir": false, "size": 2457622},
+                {"filename": "filename.mp4", "is_dir": false, "size": 245761024},
+                {"filename": "655.jpg", "is_dir": false, "size": 24576}
+            ]
+        }
+
+        fatherDir = response['father'];
+        pageFiles = response['files'];
+        pageFiles = sortFiles(pageFiles);
+
+        renderContent(fatherDir, pageFiles);*/
+        // endregion
     }
 
     function renderContent(fatherDir, files) {
@@ -51,13 +54,22 @@
         let hrefTemplate;
         if (visibleDir === undefined && path === undefined) {
             // 场景1
-            document.getElementById('sort-btn').remove();
+            document.getElementById('sort-btn').classList.add('hidden');
+            document.querySelector('#file_list .up-level').classList.add('hidden');
+            document.getElementById('current-location').classList.add('hidden');
             hrefTemplate = (filename) => { return `/?visible_dir=${filename}` };
         } else if (visibleDir !== undefined && path === undefined) {
             // 场景2
+            document.querySelector('#file_list .up-level').href = '/';
+            document.getElementById('current-location').textContent = fatherDir;
             hrefTemplate = (filename) => { return `/?visible_dir=${fatherDir}&path=${filename}` };
         } else if (visibleDir !== undefined && path !== undefined) {
             // 场景3
+            const isMultiLevelPath = inArray('/', path.replace(/\\/g, '/'));
+            const href1 = `/?visible_dir=${visibleDir}&path=${getUpLevelPath(path)}`;
+            const href2 = `/?visible_dir=${visibleDir}`;
+            document.querySelector('#file_list .up-level').href = isMultiLevelPath ? href1 : href2;
+            document.getElementById('current-location').textContent = fatherDir;
             hrefTemplate = (filename) => { return `/?visible_dir=${visibleDir}&path=${connectPath(path, filename)}` };
         } else {
             return undefined;
