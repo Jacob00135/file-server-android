@@ -11,16 +11,16 @@
         document.querySelector('#sort-dialog .btn-group .submit').addEventListener('click', submitSortSelectEvent);
         document.querySelector('#sort-dialog .btn-group .close').addEventListener('click', closeSortDialog);
 
-        // ajax.getJson(`/api/index${location.search}`, (response) => {
-        //     fatherDir = response['father'];
-        //     pageFiles = response['files'];
-        //     pageFiles = sortFiles(pageFiles);
-        //
-        //     renderContent(fatherDir, pageFiles);
-        // });
+        ajax.getJson(`/api/index${location.search}`, (response) => {
+            fatherDir = response['father'];
+            pageFiles = response['files'];
+            pageFiles = sortFiles(pageFiles);
+
+            renderContent(fatherDir, pageFiles);
+        });
 
         // region 测试用代码
-        const response = {
+        /*const response = {
             "father": "/root/file-server-android",
             "files": [
                 {"filename": "ab.mp3", "is_dir": false, "size": 24576},
@@ -39,7 +39,7 @@
         pageFiles = response['files'];
         pageFiles = sortFiles(pageFiles);
 
-        renderContent(fatherDir, pageFiles);
+        renderContent(fatherDir, pageFiles);*/
         // endregion
     }
 
