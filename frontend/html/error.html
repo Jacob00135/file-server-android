@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>{{ .code }}</title>
+
+    <!--  CSS Style  -->
+    <link rel="stylesheet" href="../static/css/global.css" />
+
+    <style>
+        .status-code {
+            margin-top: 40px;
+            font-weight: 600;
+            font-size: 40px;
+            text-align: center;
+            color: rgb(100, 100, 100);
+        }
+
+        .message {
+            margin-top: 10px;
+            font-size: 18px;
+            color: rgb(100, 100, 100);
+            text-align: center;
+        }
+
+        .index-btn-father {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .index-btn-father .index-btn {
+            padding: 10px 20px;
+            box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #adc3d2;
+            border-radius: 4px;
+            background-color: #6ab6e8;
+            color: #000000;
+            font-size: 16px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .index-btn-father .index-btn:hover {
+            background-color: #2b86db;
+            color: #ebeae7;
+        }
+    </style>
+
+</head>
+<body>
+
+<h1 class="status-code">{{ .code }}</h1>
+<p class="message">{{ .message }}</p>
+<div class="index-btn-father">
+    <a href="/" class="index-btn">返回主页</a>
+</div>
+
+<!-- JavaScript -->
+<script type="text/javascript" src="../static/js/global.js"></script>
+
+</body>
+</html>

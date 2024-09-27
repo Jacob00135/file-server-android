@@ -80,7 +80,8 @@ func ListFiles(c fiber.Ctx) error {
 		} else {
 			files, err := getFilesByPath(target)
 			if err != nil {
-				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				return c.Status(fiber.StatusInternalServerError).Render("error", fiber.Map{
+					"code":    fiber.StatusInternalServerError,
 					"message": fmt.Sprintf("Could not read directory: %v", err.Error()),
 				})
 			}
@@ -93,7 +94,8 @@ func ListFiles(c fiber.Ctx) error {
 	} else {
 		files, err := db.DB.GetDirsByPermission(userPermission)
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			return c.Status(fiber.StatusInternalServerError).Render("error", fiber.Map{
+				"code":    fiber.StatusInternalServerError,
 				"message": err.Error(),
 			})
 		}

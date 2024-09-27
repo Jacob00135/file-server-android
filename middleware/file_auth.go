@@ -13,7 +13,8 @@ import (
 func FileAuth(c fiber.Ctx) error {
 	sess, err := db.Storage.Get(c)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).Render("error", fiber.Map{
+			"code":    fiber.StatusInternalServerError,
 			"message": "Could not Get session",
 		})
 	}
@@ -27,7 +28,8 @@ func FileAuth(c fiber.Ctx) error {
 		var err error
 		userPermission, err = db.DB.GetUserPermission(username)
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			return c.Status(fiber.StatusInternalServerError).Render("error", fiber.Map{
+				"code":    fiber.StatusInternalServerError,
 				"message": err.Error(),
 			})
 		}
@@ -42,12 +44,14 @@ func FileAuth(c fiber.Ctx) error {
 
 	dirPermission, err := db.DB.GetFilePermission(dir)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).Render("error", fiber.Map{
+			"code":    fiber.StatusInternalServerError,
 			"message": err.Error(),
 		})
 	}
 	if userPermission < dirPermission {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+		return c.Status(fiber.StatusForbidden).Render("error", fiber.Map{
+			"code":    fiber.StatusForbidden,
 			"message": "visible_dir permission denied",
 		})
 	}
@@ -55,12 +59,14 @@ func FileAuth(c fiber.Ctx) error {
 	path := filepath.Clean(c.Query("path"))
 	target := filepath.Join(dir, path)
 	if !securePath(dir, target) {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+		return c.Status(fiber.StatusForbidden).Render("error", fiber.Map{
+			"code":    fiber.StatusForbidden,
 			"message": "Invalid path",
 		})
 	}
 	if !osFileExists(target) {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		return c.Status(fiber.StatusNotFound).Render("error", fiber.Map{
+			"code":    fiber.StatusNotFound,
 			"message": "File not found",
 		})
 	}
