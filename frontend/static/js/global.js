@@ -81,6 +81,12 @@ window.fileTypeOrderMap = {
     'unknown': 6
 }
 
+window.permissionMap = {
+    1: '游客',
+    2: '普通用户',
+    4: '管理员'
+}
+
 window.ajax = {
     getJson: function (url, callback) {
         const xhr = new XMLHttpRequest();

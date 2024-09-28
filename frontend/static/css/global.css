@@ -4,5 +4,118 @@
 
 body {
     margin: 0;
+    padding-top: 50px;
     background-color: #eaeaea;
 }
+
+/* region 导航栏 */
+#top-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-color: #cce7f9;
+}
+
+#top-nav .content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#top-nav .content .link-btn {
+    box-sizing: border-box;
+    display: block;
+    width: 50px;
+    height: 50px;
+    padding: 10px;
+}
+
+#top-nav .content .link-btn .icon {
+    width: 30px;
+    height: 30px;
+    fill: #7c3aed;
+}
+
+#top-nav .content .link-btn:hover {
+    background-color: #2b86db;
+}
+
+#top-nav .content .link-btn:hover .icon {
+    fill: #eaeaea;
+}
+
+#top-nav .content .btn-group {
+    display: flex;
+}
+
+#top-nav .content .btn-group .select {
+    position: relative;
+}
+
+#top-nav .content .btn-group .select .menu-btn {
+    box-sizing: border-box;
+    display: block;
+    width: 50px;
+    height: 50px;
+    margin: 0;
+    padding: 10px;
+    border-width: 0;
+    background-color: transparent;
+    outline: none;
+    cursor: pointer;
+}
+
+#top-nav .content .btn-group .select .menu-btn .icon {
+    width: 30px;
+    height: 30px;
+    fill: #7c3aed;
+}
+
+#top-nav .content .btn-group .select .menu-btn:hover,
+#top-nav .content .btn-group .select:hover .menu-btn {
+    background-color: #2b86db;
+}
+
+#top-nav .content .btn-group .select .menu-btn:hover .icon,
+#top-nav .content .btn-group .select:hover .menu-btn .icon {
+    fill: #eaeaea;
+}
+
+#top-nav .content .btn-group .select .options {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: #cce7f9;
+}
+
+#top-nav .content .btn-group .select:hover .options {
+    display: flex;
+}
+
+#top-nav .content .btn-group .select .options .option:first-child {
+    border-top-width: 1px;
+}
+
+#top-nav .content .btn-group .select .options .option {
+    width: 90px;
+    padding: 10px 12px;
+    border: 1px solid #c6d3df;
+    border-top-width: 0;
+    color: #7c3aed;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+#top-nav .content .btn-group .select .options .option:hover {
+    background-color: #2b86db;
+    color: #eaeaea;
+}
+
+/* endregion */
