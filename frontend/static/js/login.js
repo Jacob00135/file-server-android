@@ -15,7 +15,7 @@
             'password': form['password'].value
         };
         ajax.postJson('/api/login', data, (response) => {
-            if (response['status'] === 1) {
+            if (response['success']) {
                 location.assign('/');
                 return undefined;
             }

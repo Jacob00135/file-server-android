@@ -65,7 +65,7 @@ h1 {
     background-color: #529ace;
 }
 
-#login-widget form .error-message {
+#login-widget form #error-message {
     margin-top: 14px;
     text-align: center;
     color: #f43333;
