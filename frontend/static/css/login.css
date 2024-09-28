@@ -1,0 +1,66 @@
+h1 {
+    margin: 0 0 20px 0;
+    font-weight: 400;
+    text-align: center;
+}
+
+#login-widget {
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+    height: 300px;
+    margin-top: -150px;
+    margin-left: -200px;
+    padding-top: 28px;
+    border-radius: 4px;
+    box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.2);
+    background-color: #f0f0f0;
+}
+
+#login-widget form .input-widget {
+    display: flex;
+    width: 80%;
+    height: 30px;
+    margin: 20px auto;
+    border: 1px solid #aeaeae;
+    border-radius: 4px;
+}
+
+#login-widget form .input-widget label {
+    padding: 0 14px;
+    border-right: 1px solid #aeaeae;
+    border-radius: 4px 0 0 4px;
+    background-color: #5eb3f0;
+    font-size: 16px;
+    line-height: 30px;
+    cursor: pointer;
+}
+
+#login-widget form .input-widget input {
+    flex: 1;
+    padding: 0 10px;
+    border-width: 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 16px;
+    line-height: 30px;
+    outline: none;
+}
+
+#login-widget form [type="submit"] {
+    display: block;
+    width: 80%;
+    margin: 30px auto 0;
+    padding: 10px 0;
+    border-width: 0;
+    border-radius: 4px;
+    background-color: #407aa4;
+    color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#login-widget form [type="submit"]:hover {
+    background-color: #529ace;
+}
