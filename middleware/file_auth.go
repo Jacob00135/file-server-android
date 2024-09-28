@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -33,6 +34,7 @@ func FileAuth(c fiber.Ctx) error {
 				"message": err.Error(),
 			})
 		}
+		fmt.Println("username: ", username, "userPermission: ", userPermission)
 	}
 	c.Locals("userPermission", userPermission)
 

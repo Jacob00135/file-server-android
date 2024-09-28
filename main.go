@@ -20,7 +20,6 @@ func main() {
 	defer db.DB.Close()
 
 	// Initialize a new Fiber app
-	// engin := html.New("./frontend/html", ".html")
 	app := fiber.New(fiber.Config{
 		JSONEncoder: sonic.Marshal,
 		JSONDecoder: sonic.Unmarshal,
@@ -40,5 +39,5 @@ func main() {
 	routes.Setup(app)
 
 	// Start the server on port 3000
-	log.Fatal(app.Listen("0.0.0.0:9528"))
+	log.Fatal(app.Listen("0.0.0.0:9527"))
 }

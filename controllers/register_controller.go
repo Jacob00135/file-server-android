@@ -16,7 +16,7 @@ func RegisterUser(c fiber.Ctx) error {
 		handleRegistrationError(c, err)
 	}
 
-	exists, err := db.DB.CheckUserExists(user.Username)
+	exists, err := db.DB.CheckUserExists(user.Username, user.Password)
 	if err != nil {
 		n_err := fmt.Errorf("failed to check if user exists: %w", err)
 		return handleRegistrationError(c, n_err)
@@ -42,8 +42,9 @@ func RegisterUser(c fiber.Ctx) error {
 func handleRegistrationError(c fiber.Ctx, err error) error {
 	switch {
 	default:
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": err.Error(),
+		return c.Status(fiber.StatusInternalServerError).Render("error", fiber.Map{
+			"code":    fiber.StatusInternalServerError,
+			"message": fmt.Sprintf("Could not read directory: %v", err.Error()),
 		})
 	}
 }

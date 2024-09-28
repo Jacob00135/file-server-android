@@ -128,13 +128,13 @@ func (db *Database) GetDirsByPermission(p uint) ([]models.File, error) {
 	if db.Conn == nil {
 		return nil, errors.New("database connection is not open")
 	}
-	rows, err := db.Conn.Query("SELECT directorypath FROM directory WHERE permission = ?", p)
+	rows, err := db.Conn.Query("SELECT directorypath FROM directory WHERE permission <= ?", p)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var files []models.File
+	files := make([]models.File, 0)
 	for rows.Next() {
 		var path string
 		if err := rows.Scan(&path); err != nil {
@@ -153,12 +153,12 @@ func (db *Database) GetDirsByPermission(p uint) ([]models.File, error) {
 	return files, nil
 }
 
-func (db *Database) CheckUserExists(username string) (bool, error) {
+func (db *Database) CheckUserExists(username, password string) (bool, error) {
 	if db.Conn == nil {
 		return false, errors.New("database connection is not open")
 	}
 
-	err := db.Conn.QueryRow("SELECT 1 FROM users WHERE username = ?", username).Scan(new(int))
+	err := db.Conn.QueryRow("SELECT 1 FROM users WHERE username = ? and password = ?", username, password).Scan(new(int))
 	if err == nil {
 		return true, nil // 用户存在
 	} else if errors.Is(err, sql.ErrNoRows) {

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/gofiber/fiber/v3"
 
@@ -10,21 +11,30 @@ import (
 )
 
 func LoginUser(c fiber.Ctx) error {
+	slog.Info("Login handler called")
 	// Parse the body into the UserInput struct
 	user := new(models.UserInput)
 	if err := c.Bind().Body(user); err != nil {
-		handleRegistrationError(c, err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Could not parse request body",
+		})
 	}
 
 	// Check if the user exists in the database and the password is correct
-	exists, err := db.DB.CheckUserExists(user.Username)
+	exists, err := db.DB.CheckUserExists(user.Username, user.Password)
 	if err != nil {
-		n_err := fmt.Errorf("failed to check if user exists: %w", err)
-		return handleRegistrationError(c, n_err)
+		n_err := fmt.Errorf("database error, failed to check if user exists: %w", err)
+		// return handleRegistrationError(c, n_err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": n_err.Error(),
+		})
 	}
-	if exists {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "User already exists",
+	if !exists {
+		return c.JSON(fiber.Map{
+			"success": false,
+			"message": "User or password is incorrect",
 		})
 	}
 
@@ -32,6 +42,7 @@ func LoginUser(c fiber.Ctx) error {
 	sess, err := db.Storage.Get(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
 			"message": "Could not Get session",
 		})
 	}
@@ -40,12 +51,14 @@ func LoginUser(c fiber.Ctx) error {
 	sess.Set("username", user.Username)
 	if err := sess.Save(); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
 			"message": "Could not save session",
 		})
 	}
 
 	// Return a success message
 	return c.JSON(fiber.Map{
+		"success": true,
 		"message": "Successfully logged in",
 	})
 }

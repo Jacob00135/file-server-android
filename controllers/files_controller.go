@@ -99,7 +99,6 @@ func ListFiles(c fiber.Ctx) error {
 				"message": err.Error(),
 			})
 		}
-
 		return c.JSON(fiber.Map{
 			"father": "",
 			"files":  files,
