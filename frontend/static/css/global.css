@@ -2,6 +2,20 @@
     display: none!important;
 }
 
+.clearfix:before,
+.clearfix:after {
+    content: "";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1;
+}
+
 body {
     margin: 0;
     padding-top: 50px;

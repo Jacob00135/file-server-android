@@ -8,3 +8,78 @@ h1 {
     max-width: 800px;
     margin: 0 auto;
 }
+
+#main .row {
+    position: relative;
+    min-height: 42px;
+    border: 1px solid #c6d3df;
+    border-bottom-width: 0;
+    background-color: #cce7f9;
+}
+
+#main .row:last-child {
+    border-bottom-width: 1px;
+}
+
+#main .row .username {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px 127px 10px 10px;
+    border-right: 1px solid #c6d3df;
+}
+
+#main .row .permission {
+    position: absolute;
+    top: 0;
+    right: 43px;
+    width: 84px;
+    height: 100%;
+    border-left: 1px solid #c6d3df;
+}
+
+#main .row .permission .text {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 22px;
+    margin-top: -11px;
+    text-align: center;
+}
+
+#main .row .delete-btn {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 43px;
+    height: 100%;
+    padding: 0;
+    border-width: 0;
+    border-left: 1px solid #c6d3df;
+    background-color: #cce7f9;
+}
+
+#main .row:not(.title) .delete-btn {
+    cursor: pointer;
+}
+
+#main .row:not(.title) .delete-btn:hover {
+    background-color: #2b86db;
+}
+
+#main .row .delete-btn .icon {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    margin-left: -15px;
+    margin-top: -15px;
+    fill: red;
+}
+
+/*#main .row:hover {*/
+/*    background-color: #2b86db;*/
+/*    color: #eaeaea;*/
+/*}*/
