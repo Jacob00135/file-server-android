@@ -88,6 +88,17 @@ window.permissionMap = {
 }
 
 window.ajax = {
+    get: function (url, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('get', url, true);
+        xhr.addEventListener('readystatechange', (e) => {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback && callback(xhr);
+            }
+        });
+        xhr.send();
+    },
+
     getJson: function (url, callback) {
         const xhr = new XMLHttpRequest();
         xhr.open('get', url, true);
@@ -188,3 +199,27 @@ function inArray(value, array) {
     }
     return false;
 }
+
+(() => {
+    main();
+
+    function main() {
+        ajax.get(location.pathname, (xhr) => {
+            const permission = parseInt(xhr.getResponseHeader('X-User-Permission'));
+            hiddenTopNavButton(permission);
+        });
+    }
+
+    function hiddenTopNavButton(permission) {
+        const eleArray = document.querySelectorAll('[data-min-permission][data-max-permission]');
+
+        for (let i = 0; i < eleArray.length; i++) {
+            let ele = eleArray[i];
+            let minPermission = parseInt(ele.getAttribute('data-min-permission'));
+            let maxPermission = parseInt(ele.getAttribute('data-max-permission'));
+            if (permission < minPermission || permission > maxPermission) {
+                ele.classList.add('hidden');
+            }
+        }
+    }
+})();

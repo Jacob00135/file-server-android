@@ -7,18 +7,30 @@ h1 {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
+    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1);
 }
 
 #main .row {
     position: relative;
     min-height: 42px;
     border: 1px solid #c6d3df;
-    border-bottom-width: 0;
+    border-top-width: 0;
     background-color: #cce7f9;
 }
 
-#main .row:last-child {
-    border-bottom-width: 1px;
+#main .row.title {
+    border: 1px solid #b5c1cc;
+    border-bottom: 2px solid #959fa8;
+    background-color: #a9d1ec;
+}
+
+#main .row.title .permission {
+    border-left: 1px solid #b5c1cc;
+}
+
+#main .row.title .delete-btn {
+    border-left: 1px solid #b5c1cc;
+    background-color: #a9d1ec;
 }
 
 #main .row .username {
@@ -78,8 +90,3 @@ h1 {
     margin-top: -15px;
     fill: red;
 }
-
-/*#main .row:hover {*/
-/*    background-color: #2b86db;*/
-/*    color: #eaeaea;*/
-/*}*/

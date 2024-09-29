@@ -20,20 +20,20 @@
             <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 512 512"><path d="M261.56 101.28a8 8 0 0 0-11.06 0L66.4 277.15a8 8 0 0 0-2.47 5.79L63.9 448a32 32 0 0 0 32 32H192a16 16 0 0 0 16-16V328a8 8 0 0 1 8-8h80a8 8 0 0 1 8 8v136a16 16 0 0 0 16 16h96.06a32 32 0 0 0 32-32V282.94a8 8 0 0 0-2.47-5.79Z"/><path d="m490.91 244.15l-74.8-71.56V64a16 16 0 0 0-16-16h-48a16 16 0 0 0-16 16v32l-57.92-55.38C272.77 35.14 264.71 32 256 32c-8.68 0-16.72 3.14-22.14 8.63l-212.7 203.5c-6.22 6-7 15.87-1.34 22.37A16 16 0 0 0 43 267.56L250.5 69.28a8 8 0 0 1 11.06 0l207.52 198.28a16 16 0 0 0 22.59-.44c6.14-6.36 5.63-16.86-.76-22.97"/></svg>
         </a>
         <div class="btn-group">
-            <a href="/login" id="login-link" class="link-btn">
+            <a href="/login" id="login-link" class="link-btn" data-min-permission="1" data-max-permission="1">
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="114.67" height="128" viewBox="0 0 344 384"><path d="M170.5 192q-35.5 0-60.5-25t-25-60.5T110 46t60.5-25T231 46t25 60.5t-25 60.5t-60.5 25m0 43q31.5 0 69.5 9t69.5 29.5T341 320v43H0v-43q0-26 31.5-46.5T101 244t69.5-9"/></svg>
             </a>
-            <a href="/logout" id="logout-link" class="link-btn">
+            <a href="/logout" id="logout-link" class="link-btn" data-min-permission="2" data-max-permission="4">
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path d="m17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5M4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4z"/></svg>
             </a>
-            <div class="select">
+            <div class="select" data-min-permission="2" data-max-permission="4">
                 <button type="button" class="menu-btn">
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path d="M3 18v-2h18v2zm0-5v-2h18v2zm0-5V6h18v2z"/></svg>
                 </button>
                 <div class="options">
-                    <a href="/manage_user" class="option">管理用户</a>
-                    <a href="/manage_dir" class="option">管理目录</a>
-                    <a href="/change_password" class="option">修改密码</a>
+                    <a href="/manage_user" class="option" data-min-permission="4" data-max-permission="4">管理用户</a>
+                    <a href="/manage_dir" class="option" data-min-permission="4" data-max-permission="4">管理目录</a>
+                    <a href="/change_password" class="option" data-min-permission="2" data-max-permission="4">修改密码</a>
                 </div>
             </div>
         </div>
@@ -48,9 +48,7 @@
         <div class="item permission">
             <div class="text">权限</div>
         </div>
-        <button class="item delete-btn" type="button">
-<!--            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z"/></svg>-->
-        </button>
+        <button class="item delete-btn" type="button"></button>
     </div>
 </div>
 
