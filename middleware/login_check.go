@@ -6,7 +6,7 @@ import (
 	db "github.com/Jacob00135/file-server-android/database"
 )
 
-func AdminAuth(c fiber.Ctx) error {
+func LoginCheck(c fiber.Ctx) error {
 	sess, err := db.Storage.Get(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).Render("error", fiber.Map{
@@ -15,17 +15,11 @@ func AdminAuth(c fiber.Ctx) error {
 		})
 	}
 
-	var username string
-	if name := sess.Get("username"); name != nil {
-		username = name.(string)
-	}
-
-	if username != "admin" {
-		return c.Status(fiber.StatusForbidden).Render("error", fiber.Map{
-			"code":    fiber.StatusForbidden,
-			"message": "Permission denied",
+	if name := sess.Get("username"); name == nil {
+		return c.Status(fiber.StatusUnauthorized).Render("error", fiber.Map{
+			"code":    fiber.StatusUnauthorized,
+			"message": "Please login first",
 		})
 	}
-
 	return c.Next()
 }

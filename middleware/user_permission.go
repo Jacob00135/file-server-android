@@ -17,6 +17,7 @@ func GetUserPermission(c fiber.Ctx) error {
 	var username string
 	if name := sess.Get("username"); name != nil {
 		username = name.(string)
+		c.Locals("username", username)
 	}
 
 	var userPermission uint = 1

@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"log/slog"
 
 	"github.com/gofiber/fiber/v3"
@@ -28,6 +27,5 @@ func redirectIfLoggedIn(c fiber.Ctx) error {
 
 func IsLoggedIn(c fiber.Ctx) bool {
 	userp := c.Locals("userPermission").(uint)
-	fmt.Println(userp)
 	return userp != 1
 }

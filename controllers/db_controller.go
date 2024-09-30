@@ -72,31 +72,65 @@ func DelUser(c fiber.Ctx) error {
 	})
 }
 
-func UpdateUser(c fiber.Ctx) error {
-	user := struct {
-		Username   string `json:"username"`
-		Password   string `json:"password"`
-		Permission uint   `json:"permission"`
+func UpdateUserPwd(c fiber.Ctx) error {
+	psw := &struct {
+		Password string `json:"password"`
 	}{}
+	username := c.Locals("username").(string)
 
-	if err := c.Bind().Body(user); err != nil {
+	if err := c.Bind().Body(psw); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "Could not parse request body",
 		})
 	}
 
-	err := db.DB.UpdateUser(user.Username, user.Password, user.Permission)
+	ok, err := db.DB.CheckUserExists(username, psw.Password)
 	if err != nil {
+		n_err := fmt.Errorf("database error, failed to check if user exists: %w", err)
+		// return handleRegistrationError(c, n_err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": n_err.Error(),
+		})
+	}
+
+	if ok {
+		return c.JSON(fiber.Map{
+			"success": false,
+			"message": "New password is the same as the old one",
+		})
+	}
+
+	err = db.DB.UpdateUser(username, psw.Password, uint(2))
+	if err != nil {
+		return c.JSON(fiber.Map{
 			"success": false,
 			"message": err.Error(),
 		})
 	}
 
+	sess, err := db.Storage.Get(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).Render("error", fiber.Map{
+			"code":    fiber.StatusInternalServerError,
+			"message": "Could not Get session",
+		})
+	}
+
+	// 删除 username，不存在则忽略
+	sess.Delete("username")
+	err = sess.Save()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).Render("error", fiber.Map{
+			"code":    fiber.StatusInternalServerError,
+			"message": "Could not save session",
+		})
+	}
+
 	return c.JSON(fiber.Map{
 		"success": true,
-		"message": fmt.Sprintf("User %s updated", user.Username),
+		"message": fmt.Sprintf("User %s password updated", username),
 	})
 }
 

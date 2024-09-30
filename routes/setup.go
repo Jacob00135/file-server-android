@@ -8,5 +8,5 @@ func Setup(app *fiber.App) {
 	SetupLoginRoutes(app)
 
 	SetupAdminRoutes(app)
-	SetupUPRoutes(app)
+	SetupUserRoutes(app)
 }

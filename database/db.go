@@ -176,17 +176,23 @@ func (db *Database) UpdateUser(username, password string, p uint) error {
 	if db.Conn == nil {
 		return errors.New("database connection is not open")
 	}
-	if username == "admin" {
-		return errors.New("admin user cannot be updated")
+	// if username == "admin" {
+	// 	return errors.New("admin user cannot be updated")
+	// }
+	// check pwd in db
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
 	}
-	res, err := db.Conn.Exec("UPDATE users SET password = ?, permission = ? WHERE username = ?", password, p, username)
+
+	res, err := db.Conn.Exec("UPDATE users SET password = ?, permission = ? WHERE username = ?", hashedPassword, p, username)
 	if err != nil {
 		return err
 	}
 	if rowsAffected, err := res.RowsAffected(); err == nil && rowsAffected > 0 {
 		return nil
 	}
-	return fmt.Errorf("delete %s faild", username)
+	return fmt.Errorf("update %s faild", username)
 }
 
 func (db *Database) InsertDir(path string, p int) error {
