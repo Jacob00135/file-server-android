@@ -98,8 +98,7 @@
         const url = form.action;
         const data = {
             'username': form.querySelector('[name="username"]').value,
-            'password': password,
-            'permission': parseInt(form.querySelector('[name="permission"]').value)
+            'password': password
         };
         ajax.postJson(url, data, (response) => {
             if (response['success']) {
