@@ -3,6 +3,8 @@
     main();
 
     function main() {
+
+
         ajax.getJson('/api/manage_user', (response) => {
             renderContent(response['users']);
         });
@@ -24,7 +26,11 @@
         const mainElement = document.getElementById('main');
         for (let i = 0; i < users.length; i++) {
             let user = users[i];
-            let html = `<div class="row">
+            if (user['permission'] === 4) {
+                continue;
+            }
+
+            let html = `<div class="row" data-user-id="${user['id']}">
                 <div class="item username">${user['username']}</div>
                 <div class="item permission">
                     <div class="text">${permissionMap[user['permission']]}</div>
@@ -34,7 +40,33 @@
                 </button>
             </div>`;
 
-            mainElement.appendChild(htmlToElement(html));
+            let row = htmlToElement(html);
+            row.querySelector('.delete-btn').addEventListener('click', deleteButtonClickEvent);
+
+            mainElement.appendChild(row);
         }
+    }
+
+    function deleteButtonClickEvent(e) {
+        if (!confirm('确定删除此记录？')) {
+            return undefined;
+        }
+
+        let ele = e.target;
+        let userId = ele.getAttribute('data-user-id');
+        while (userId === null) {
+            ele = ele.parentNode;
+        }
+
+        const data = {'id': userId};
+        ajax.deleteRequest(`/api/manage_user/${userId}`, data, (xhr) => {
+            const response = JSON.parse(xhr.responseText);
+            if (!response['success']) {
+                alert(`删除失败：${response['message']}`);
+                return undefined;
+            }
+
+            location.reload();
+        });
     }
 })();

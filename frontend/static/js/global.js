@@ -87,10 +87,23 @@ window.permissionMap = {
     4: '管理员'
 }
 
+
+
 window.ajax = {
     get: function (url, callback) {
         const xhr = new XMLHttpRequest();
         xhr.open('get', url, true);
+        xhr.addEventListener('readystatechange', (e) => {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback && callback(xhr);
+            }
+        });
+        xhr.send();
+    },
+
+    deleteRequest: function (url, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('DELETE', url, true);
         xhr.addEventListener('readystatechange', (e) => {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 callback && callback(xhr);
