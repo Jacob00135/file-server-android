@@ -3,8 +3,12 @@
     main();
 
     function main() {
+        ajax.getJson('/api/manage_user', (response) => {
+            renderContent(response['users']);
+        });
+
         // region 测试用代码
-        const data = {
+        /*const data = {
             'users': [
                 {'username': 'admin', 'permission': 4},
                 {'username': 'red', 'permission': 2},
@@ -12,7 +16,7 @@
                 {'username': 'blue', 'permission': 2}
             ]
         };
-        renderContent(data);
+        renderContent(data);*/
         // endregion
     }
 

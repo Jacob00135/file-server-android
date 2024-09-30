@@ -204,8 +204,8 @@ function inArray(value, array) {
     main();
 
     function main() {
-        ajax.get(location.pathname, (xhr) => {
-            const permission = parseInt(xhr.getResponseHeader('X-User-Permission'));
+        ajax.getJson('/api/authentication', (response) => {
+            const permission = response['success'] ? parseInt(response['permission']) : 1;
             hiddenTopNavButton(permission);
         });
     }
