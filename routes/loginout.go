@@ -10,9 +10,11 @@ import (
 )
 
 func SetupLoginRoutes(app *fiber.App) {
+	// login
 	app.Get("/login", redirectIfLoggedIn)
 	app.Post("/api/login", controllers.LoginUser)
 
+	// logout
 	app.Get("/logout", controllers.LogoutUser)
 }
 
