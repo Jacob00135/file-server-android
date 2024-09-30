@@ -58,10 +58,10 @@
         let userId = ele.getAttribute('data-user-id');
         while (userId === null) {
             ele = ele.parentNode;
+            userId = ele.getAttribute('data-user-id');
         }
 
-        const data = {'id': userId};
-        ajax.deleteRequest(`/api/manage_user/${userId}`, data, (xhr) => {
+        ajax.deleteRequest(`/api/manage_user/${userId}`, (xhr) => {
             const response = JSON.parse(xhr.responseText);
             if (!response['success']) {
                 alert(`删除失败：${response['message']}`);

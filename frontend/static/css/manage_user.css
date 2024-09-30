@@ -171,6 +171,7 @@ h1 {
     width: 100%;
     padding: 10px 127px 10px 10px;
     border-right: 1px solid #c6d3df;
+    word-break: break-all;
 }
 
 #main .row .permission {
