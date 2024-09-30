@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title></title>
+    <title>管理用户</title>
 
     <!--  CSS Style  -->
     <link rel="stylesheet" href="../static/css/global.css" />
@@ -40,7 +40,42 @@
     </div>
 </div>
 
+<div id="overlay" class="hidden"></div>
+<dialog open id="add-user-dialog" class="hidden">
+    <h2 class="title">添加用户</h2>
+    <form action="/api/manage_user">
+        <div class="input-widget">
+            <label for="username">用户名</label>
+            <input type="text" name="username" id="username" required autocomplete="off" />
+        </div>
+        <div class="input-widget">
+            <label for="password">密码</label>
+            <input type="password" name="password" id="password" required autocomplete="off" />
+        </div>
+        <div class="input-widget">
+            <label for="again-password">确认密码</label>
+            <input type="password" id="again-password" required autocomplete="off" />
+        </div>
+        <div class="select-widget">
+            <span class="text">权限</span>
+            <select name="permission">
+                <option value="2">普通用户</option>
+                <option value="4">管理员</option>
+            </select>
+        </div>
+        <div class="btn-group">
+            <button type="submit">确定</button>
+            <button type="button" class="close">取消</button>
+        </div>
+        <div id="add-user-error-message" class="hidden"></div>
+    </form>
+</dialog>
+
 <h1>管理用户</h1>
+
+<div id="btn-group">
+    <button type="button" id="add-user">添加用户</button>
+</div>
 
 <div id="main">
     <div class="row title">

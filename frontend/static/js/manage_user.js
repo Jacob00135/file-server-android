@@ -3,7 +3,9 @@
     main();
 
     function main() {
-
+        document.getElementById('add-user').addEventListener('click', openAddUserDialog);
+        document.querySelector('#add-user-dialog form').addEventListener('submit', addUserFormSubmitEvent);
+        document.querySelector('#add-user-dialog form .btn-group .close').addEventListener('click', closeAddUserDialog);
 
         ajax.getJson('/api/manage_user', (response) => {
             renderContent(response['users']);
@@ -67,6 +69,45 @@
             }
 
             location.reload();
+        });
+    }
+
+    function openAddUserDialog() {
+        document.getElementById('overlay').classList.remove('hidden');
+        document.getElementById('add-user-dialog').classList.remove('hidden');
+    }
+
+    function closeAddUserDialog() {
+        document.getElementById('overlay').classList.add('hidden');
+        document.getElementById('add-user-dialog').classList.add('hidden');
+    }
+
+    function addUserFormSubmitEvent(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const errorMessageElement = form.querySelector('#add-user-error-message');
+        const password = form.querySelector('[name="password"]').value;
+        const againPassword = form.querySelector('#again-password').value;
+        if (password !== againPassword) {
+            errorMessageElement.textContent = '两次输入的密码不一致！';
+            errorMessageElement.classList.remove('hidden');
+            return undefined;
+        }
+
+        const url = form.action;
+        const data = {
+            'username': form.querySelector('[name="username"]').value,
+            'password': password,
+            'permission': parseInt(form.querySelector('[name="permission"]').value)
+        };
+        ajax.postJson(url, data, (response) => {
+            if (response['success']) {
+                location.reload();
+            } else {
+                errorMessageElement.textContent = response['message'];
+                errorMessageElement.classList.remove('hidden');
+            }
         });
     }
 })();

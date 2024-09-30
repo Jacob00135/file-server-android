@@ -1,3 +1,5 @@
 .idea
 *.db
 .env
+database/sqlite3-tools
+sqlite3.ps1
