@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -41,6 +42,11 @@ func InitDB() {
 	Storage = session.New()
 	DB = &Database{Conn: conn}
 
+	// if db exits return
+	if _, err := os.Stat(dbPath); err == nil {
+		return
+	}
+
 	// 创建用户表
 	_, err = DB.Conn.Exec(`
 		CREATE TABLE IF NOT EXISTS users (
@@ -74,10 +80,14 @@ func InitDB() {
 	}{
 		{"admin", "admin", 4},
 		{"user", "user", 2},
-		{"guest", "guest", 1},
+		{"red", "red", 2},
+		{"blue", "blue", 2},
+		{"green", "green", 2},
+		{"fakeadmin", "admin", 2},
 	}
 	for _, user := range testUser {
-		_, err = DB.Conn.Exec("INSERT OR IGNORE INTO users (username, password, permission) VALUES (?, ?, ?)", user.username, user.password, user.permission)
+		// _, err = DB.Conn.Exec("INSERT OR IGNORE INTO users (username, password, permission) VALUES (?, ?, ?)", user.username, user.password, user.permission)
+		err := DB.InsertUser(user.username, user.password, uint(user.permission))
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -127,24 +137,56 @@ func (db *Database) InsertUser(username, password string, p uint) error {
 		return err
 	}
 
-	_, err = db.Conn.Exec("INSERT INTO users (username, password, permission) VALUES (?, ?, ?)", username, string(hashedPassword), p)
-	return err
+	res, err := db.Conn.Exec("INSERT OR IGNORE INTO users (username, password, permission) VALUES (?, ?, ?)", username, string(hashedPassword), p)
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected, err := res.RowsAffected(); err == nil && rowsAffected > 0 {
+		return nil
+	}
+
+	return fmt.Errorf("duplicate username: %s", username)
 }
 
-func (db *Database) DeleteUser(username string) error {
+func (db *Database) DeleteUserByName(username string) error {
 	if db.Conn == nil {
 		return errors.New("database connection is not open")
 	}
-	_, err := db.Conn.Exec("DELETE FROM users WHERE username = ?", username)
+	_, err := db.Conn.Exec("DELETE FROM users WHERE username = ? AND username != 'admin'", username)
 	return err
+}
+
+func (db *Database) DeleteUserById(id uint) error {
+	if db.Conn == nil {
+		return errors.New("database connection is not open")
+	}
+	res, err := db.Conn.Exec("DELETE FROM users WHERE userid = ? AND username != 'admin'", id)
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected, err := res.RowsAffected(); err == nil && rowsAffected > 0 {
+		return nil
+	}
+	return fmt.Errorf("delete id:%d faild", id)
 }
 
 func (db *Database) UpdateUser(username, password string, p uint) error {
 	if db.Conn == nil {
 		return errors.New("database connection is not open")
 	}
-	_, err := db.Conn.Exec("UPDATE users SET password = ?, permission = ? WHERE username = ?", password, p, username)
-	return err
+	if username == "admin" {
+		return errors.New("admin user cannot be updated")
+	}
+	res, err := db.Conn.Exec("UPDATE users SET password = ?, permission = ? WHERE username = ?", password, p, username)
+	if err != nil {
+		return err
+	}
+	if rowsAffected, err := res.RowsAffected(); err == nil && rowsAffected > 0 {
+		return nil
+	}
+	return fmt.Errorf("delete %s faild", username)
 }
 
 func (db *Database) InsertDir(path string, p int) error {
@@ -190,22 +232,27 @@ func (db *Database) CheckUserExists(username, password string) (bool, error) {
 		return false, errors.New("database connection is not open")
 	}
 
-	// var hashedPassword string
-	// err := db.Conn.QueryRow("SELECT password FROM users WHERE username = ?", username).Scan(&hashedPassword)
-	// if errors.Is(err, sql.ErrNoRows) {
-	// 	return false, nil // 用户不存在
-	// } else if err != nil {
-	// 	return false, err // 查询错误
-	// }
-
-	// err := bc
-
-	err := db.Conn.QueryRow("SELECT 1 FROM users WHERE username = ? and password = ?", username, password).Scan(new(int))
-	if err == nil {
-		return true, nil // 用户存在
-	} else if errors.Is(err, sql.ErrNoRows) {
-		return false, nil // 用户不存在
+	var hashedPassword string
+	err := db.Conn.QueryRow("SELECT password FROM users WHERE username = ?", username).Scan(&hashedPassword)
+	if errors.Is(err, sql.ErrNoRows) {
+		return false, nil // user not found
+	} else if err != nil {
+		return false, err // database error
 	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	if err == nil {
+		return true, nil // password correct
+	} else if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+		return false, nil // password incorrect
+	}
+
+	// err = db.Conn.QueryRow("SELECT 1 FROM users WHERE username = ? and password = ?", username, password).Scan(new(int))
+	// if err == nil {
+	// 	return true, nil // 用户存在
+	// } else if errors.Is(err, sql.ErrNoRows) {
+	// 	return false, nil // 用户不存在
+	// }
 	return false, err // 其他错误
 }
 
@@ -228,7 +275,7 @@ func (db *Database) GetUserInfo(username string) (*models.User, error) {
 		return nil, errors.New("database connection is not open")
 	}
 	user := new(models.User)
-	err := db.Conn.QueryRow("SELECT username, permission FROM users WHERE username = ?", username).Scan(&user.Username, &user.Permission)
+	err := db.Conn.QueryRow("SELECT userid, username, permission FROM users WHERE username = ?", username).Scan(&user.Id, &user.Username, &user.Permission)
 	if err != nil {
 		return nil, err
 	}
@@ -268,7 +315,7 @@ func (db *Database) GetAllUsers() ([]models.User, error) { // only name and perm
 		log.Fatal("database connection is not open")
 	}
 
-	rows, err := db.Conn.Query("SELECT username, permission FROM users")
+	rows, err := db.Conn.Query("SELECT userid, username, permission FROM users")
 	if err != nil {
 		return nil, err
 	}
@@ -277,7 +324,7 @@ func (db *Database) GetAllUsers() ([]models.User, error) { // only name and perm
 	users := make([]models.User, 0)
 	for rows.Next() {
 		var user models.User
-		if err := rows.Scan(&user.Username, &user.Permission); err != nil {
+		if err := rows.Scan(&user.Id, &user.Username, &user.Permission); err != nil {
 			return nil, err
 		}
 		users = append(users, user)

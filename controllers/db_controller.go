@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/gofiber/fiber/v3"
 
@@ -36,7 +37,7 @@ func AddUser(c fiber.Ctx) error {
 
 	err := db.DB.InsertUser(user.Username, user.Password, uint(2))
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.JSON(fiber.Map{
 			"success": false,
 			"message": err.Error(),
 		})
@@ -49,10 +50,17 @@ func AddUser(c fiber.Ctx) error {
 }
 
 func DelUser(c fiber.Ctx) error {
-	username := c.Params("username")
-	err := db.DB.DeleteUser(username)
+	uidStr := c.Params("id")
+	uid, err := strconv.ParseUint(uidStr, 10, 64)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.JSON(fiber.Map{
+			"success": false,
+			"message": err.Error(),
+		})
+	}
+
+	if err := db.DB.DeleteUserById(uint(uid)); err != nil {
+		return c.JSON(fiber.Map{
 			"success": false,
 			"message": err.Error(),
 		})
@@ -60,7 +68,7 @@ func DelUser(c fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"success": true,
-		"message": fmt.Sprintf("User %s deleted", username),
+		"message": fmt.Sprintf("User %s deleted", uidStr),
 	})
 }
 
