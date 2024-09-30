@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,31 +11,7 @@ import (
 )
 
 func FileAuth(c fiber.Ctx) error {
-	sess, err := db.Storage.Get(c)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).Render("error", fiber.Map{
-			"code":    fiber.StatusInternalServerError,
-			"message": "Could not Get session",
-		})
-	}
-	var username string
-	if name := sess.Get("username"); name != nil {
-		username = name.(string)
-	}
-
-	var userPermission uint = 1
-	if username != "" {
-		var err error
-		userPermission, err = db.DB.GetUserPermission(username)
-		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).Render("error", fiber.Map{
-				"code":    fiber.StatusInternalServerError,
-				"message": err.Error(),
-			})
-		}
-		fmt.Println("username: ", username, "userPermission: ", userPermission)
-	}
-	c.Locals("userPermission", userPermission)
+	userPermission := c.Locals("userPermission").(uint)
 
 	dir := filepath.Clean(c.Query("visible_dir"))
 

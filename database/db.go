@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/Jacob00135/file-server-android/models"
 	"github.com/gofiber/fiber/v3/middleware/session"
 	"github.com/joho/godotenv"
@@ -107,11 +109,41 @@ func (db *Database) Close() {
 	}
 }
 
-func (db *Database) InsertUser(username, password string) error {
+// func (db *Database) InsertUser(username, password string, p uint) error {
+// 	if db.Conn == nil {
+// 		return errors.New("database connection is not open")
+// 	}
+// 	_, err := db.Conn.Exec("INSERT INTO users (username, password, permission) VALUES (?, ?, ?)", username, password, p)
+// 	return err
+// }
+
+func (db *Database) InsertUser(username, password string, p uint) error {
 	if db.Conn == nil {
 		return errors.New("database connection is not open")
 	}
-	_, err := db.Conn.Exec("INSERT INTO users (username, password) VALUES (?, ?)", username, password)
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Conn.Exec("INSERT INTO users (username, password, permission) VALUES (?, ?, ?)", username, string(hashedPassword), p)
+	return err
+}
+
+func (db *Database) DeleteUser(username string) error {
+	if db.Conn == nil {
+		return errors.New("database connection is not open")
+	}
+	_, err := db.Conn.Exec("DELETE FROM users WHERE username = ?", username)
+	return err
+}
+
+func (db *Database) UpdateUser(username, password string, p uint) error {
+	if db.Conn == nil {
+		return errors.New("database connection is not open")
+	}
+	_, err := db.Conn.Exec("UPDATE users SET password = ?, permission = ? WHERE username = ?", password, p, username)
 	return err
 }
 
@@ -158,6 +190,16 @@ func (db *Database) CheckUserExists(username, password string) (bool, error) {
 		return false, errors.New("database connection is not open")
 	}
 
+	// var hashedPassword string
+	// err := db.Conn.QueryRow("SELECT password FROM users WHERE username = ?", username).Scan(&hashedPassword)
+	// if errors.Is(err, sql.ErrNoRows) {
+	// 	return false, nil // 用户不存在
+	// } else if err != nil {
+	// 	return false, err // 查询错误
+	// }
+
+	// err := bc
+
 	err := db.Conn.QueryRow("SELECT 1 FROM users WHERE username = ? and password = ?", username, password).Scan(new(int))
 	if err == nil {
 		return true, nil // 用户存在
@@ -181,19 +223,19 @@ func (db *Database) CheckFileExists(path string) (bool, error) {
 	return false, err // 其他错误
 }
 
-func (db *Database) getUserInfo(username string) (*models.User, error) {
+func (db *Database) GetUserInfo(username string) (*models.User, error) {
 	if db.Conn == nil {
 		return nil, errors.New("database connection is not open")
 	}
 	user := new(models.User)
-	err := db.Conn.QueryRow("SELECT * FROM users WHERE username = ?", username).Scan(&user.ID, &user.Username, &user.Password, &user.Permission)
+	err := db.Conn.QueryRow("SELECT username, permission FROM users WHERE username = ?", username).Scan(&user.Username, &user.Permission)
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
-func (db *Database) getFileInfo(path string) (*models.DbFile, error) {
+func (db *Database) GetFileInfo(path string) (*models.DbFile, error) {
 	if db.Conn == nil {
 		return nil, errors.New("database connection is not open")
 	}
@@ -206,7 +248,7 @@ func (db *Database) getFileInfo(path string) (*models.DbFile, error) {
 }
 
 func (db *Database) GetUserPermission(username string) (uint, error) {
-	user, err := db.getUserInfo(username)
+	user, err := db.GetUserInfo(username)
 	if err != nil {
 		return 0, err
 	}
@@ -214,9 +256,31 @@ func (db *Database) GetUserPermission(username string) (uint, error) {
 }
 
 func (db *Database) GetFilePermission(path string) (uint, error) {
-	file, err := db.getFileInfo(path)
+	file, err := db.GetFileInfo(path)
 	if err != nil {
 		return 0, err
 	}
 	return file.Permission, nil
+}
+
+func (db *Database) GetAllUsers() ([]models.User, error) { // only name and permission
+	if db.Conn == nil {
+		log.Fatal("database connection is not open")
+	}
+
+	rows, err := db.Conn.Query("SELECT username, permission FROM users")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	users := make([]models.User, 0)
+	for rows.Next() {
+		var user models.User
+		if err := rows.Scan(&user.Username, &user.Permission); err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	return users, nil
 }
