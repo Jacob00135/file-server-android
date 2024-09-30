@@ -20,9 +20,8 @@
         // endregion
     }
 
-    function renderContent(data) {
+    function renderContent(users) {
         const mainElement = document.getElementById('main');
-        const users = data['users'];
         for (let i = 0; i < users.length; i++) {
             let user = users[i];
             let html = `<div class="row">
