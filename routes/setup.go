@@ -6,4 +6,7 @@ func Setup(app *fiber.App) {
 	SetupFileRoutes(app)
 	SetupRegisterRoutes(app)
 	SetupLoginRoutes(app)
+
+	SetupAdminRoutes(app)
+	SetupUPRoutes(app)
 }

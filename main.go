@@ -26,6 +26,8 @@ func main() {
 		Views:       html.New("./frontend/html", ".html"),
 	})
 
+	app.Use(middleware.GetUserPermission)
+
 	app.Get("/static/*", static.New("./frontend/static"))
 
 	// app.Get("/", func(c fiber.Ctx) error {

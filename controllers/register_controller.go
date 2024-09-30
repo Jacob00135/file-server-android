@@ -27,7 +27,7 @@ func RegisterUser(c fiber.Ctx) error {
 		})
 	}
 
-	err = db.DB.InsertUser(user.Username, user.Password)
+	err = db.DB.InsertUser(user.Username, user.Password, uint(2))
 	if err != nil {
 		n_err := fmt.Errorf("failed to insert user: %w", err)
 		return handleRegistrationError(c, n_err)

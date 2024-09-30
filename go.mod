@@ -8,6 +8,7 @@ require (
 	github.com/gofiber/template/html/v2 v2.1.2
 	github.com/joho/godotenv v1.5.1
 	github.com/mattn/go-sqlite3 v1.14.23
+	golang.org/x/crypto v0.24.0
 )
 
 require (

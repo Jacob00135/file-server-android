@@ -13,9 +13,27 @@ import (
 func LoginUser(c fiber.Ctx) error {
 	slog.Info("Login handler called")
 	// Parse the body into the UserInput struct
+
+	// Get session
+	sess, err := db.Storage.Get(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Could not Get session",
+		})
+	}
+
+	// Judge user if already login
+	if sess.Get("username") != nil {
+		return c.JSON(fiber.Map{
+			"success": false,
+			"message": "User already login",
+		})
+	}
+
 	user := new(models.UserInput)
 	if err := c.Bind().Body(user); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "Could not parse request body",
 		})
@@ -35,15 +53,6 @@ func LoginUser(c fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"success": false,
 			"message": "User or password is incorrect",
-		})
-	}
-
-	// Get session
-	sess, err := db.Storage.Get(c)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"success": false,
-			"message": "Could not Get session",
 		})
 	}
 
