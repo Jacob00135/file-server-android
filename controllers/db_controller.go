@@ -150,12 +150,12 @@ func ListDirs(c fiber.Ctx) error {
 }
 
 func AddDir(c fiber.Ctx) error {
-	NewDir := struct {
+	NewDir := &struct {
 		Path       string
 		Permission uint
 	}{}
 
-	if err := c.Bind().Body(&NewDir); err != nil {
+	if err := c.Bind().Body(NewDir); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "Could not parse request body",
@@ -199,6 +199,38 @@ func DelDir(c fiber.Ctx) error {
 	})
 }
 
-func UpdateDir() {
-	// TODO
+func UpdateDir(c fiber.Ctx) error {
+	newDir := &struct {
+		DirID      uint
+		Path       string
+		Permission uint
+	}{}
+
+	if err := c.Bind().Body(newDir); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Could not parse request body",
+		})
+	}
+
+	_, err := db.DB.CheckFileExists(newDir.Path)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": err.Error(),
+		})
+	}
+
+	err = db.DB.UpdateDir(newDir.DirID, newDir.Permission, newDir.Path)
+	if err != nil {
+		return c.JSON(fiber.Map{
+			"success": false,
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": fmt.Sprintf("Dir %s updated", newDir.Path),
+	})
 }

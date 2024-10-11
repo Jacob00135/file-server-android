@@ -372,3 +372,19 @@ func (db *Database) DeleteDirById(id uint) error {
 	}
 	return fmt.Errorf("delete id:%d faild", id)
 }
+
+func (db *Database) UpdateDir(id, p uint, path string) error {
+	if db.Conn == nil {
+		return errors.New("database connection is not open")
+	}
+	res, err := db.Conn.Exec("UPDATE directory SET permission = ?, directorypath = ? WHERE directoryid = ?", p, path, id)
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected, err := res.RowsAffected(); err == nil && rowsAffected > 0 {
+		return nil
+	}
+
+	return fmt.Errorf("update id:%d faild", id)
+}
