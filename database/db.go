@@ -153,8 +153,15 @@ func (db *Database) DeleteUserByName(username string) error {
 	if db.Conn == nil {
 		return errors.New("database connection is not open")
 	}
-	_, err := db.Conn.Exec("DELETE FROM users WHERE username = ? AND username != 'admin'", username)
-	return err
+	res, err := db.Conn.Exec("DELETE FROM users WHERE username = ? AND username != 'admin'", username)
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected, err := res.RowsAffected(); err == nil && rowsAffected > 0 {
+		return nil
+	}
+	return fmt.Errorf("delete %s faild", username)
 }
 
 func (db *Database) DeleteUserById(id uint) error {
@@ -176,9 +183,6 @@ func (db *Database) UpdateUser(username, password string, p uint) error {
 	if db.Conn == nil {
 		return errors.New("database connection is not open")
 	}
-	// if username == "admin" {
-	// 	return errors.New("admin user cannot be updated")
-	// }
 	// check pwd in db
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
@@ -195,7 +199,7 @@ func (db *Database) UpdateUser(username, password string, p uint) error {
 	return fmt.Errorf("update %s faild", username)
 }
 
-func (db *Database) InsertDir(path string, p int) error {
+func (db *Database) InsertDir(path string, p uint) error {
 	if db.Conn == nil {
 		return errors.New("database connection is not open")
 	}
@@ -253,12 +257,6 @@ func (db *Database) CheckUserExists(username, password string) (bool, error) {
 		return false, nil // password incorrect
 	}
 
-	// err = db.Conn.QueryRow("SELECT 1 FROM users WHERE username = ? and password = ?", username, password).Scan(new(int))
-	// if err == nil {
-	// 	return true, nil // 用户存在
-	// } else if errors.Is(err, sql.ErrNoRows) {
-	// 	return false, nil // 用户不存在
-	// }
 	return false, err // 其他错误
 }
 
@@ -336,4 +334,41 @@ func (db *Database) GetAllUsers() ([]models.User, error) { // only name and perm
 		users = append(users, user)
 	}
 	return users, nil
+}
+
+func (db *Database) GetAllDir() ([]models.DbFile, error) {
+	if db.Conn == nil {
+		log.Fatal("database connection is not open")
+	}
+
+	rows, err := db.Conn.Query("SELECT * FROM directory")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	files := make([]models.DbFile, 0)
+	for rows.Next() {
+		var file models.DbFile
+		if err := rows.Scan(&file.ID, &file.Path, &file.Permission); err != nil {
+			return nil, err
+		}
+		files = append(files, file)
+	}
+	return files, nil
+}
+
+func (db *Database) DeleteDirById(id uint) error {
+	if db.Conn == nil {
+		return errors.New("database connection is not open")
+	}
+	res, err := db.Conn.Exec("DELETE FROM users WHERE userid = ? AND username != 'admin'", id)
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected, err := res.RowsAffected(); err == nil && rowsAffected > 0 {
+		return nil
+	}
+	return fmt.Errorf("delete id:%d faild", id)
 }

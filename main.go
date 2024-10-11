@@ -8,7 +8,6 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/static"
 	"github.com/gofiber/template/html/v2"
 
-	"github.com/Jacob00135/file-server-android/controllers"
 	db "github.com/Jacob00135/file-server-android/database"
 	"github.com/Jacob00135/file-server-android/middleware"
 	"github.com/Jacob00135/file-server-android/routes"
@@ -35,8 +34,6 @@ func main() {
 	// 		"Title": "Welcome to Home Page",
 	// 	})
 	// })
-
-	app.Get("/", controllers.WebIndex, middleware.FileAuth)
 
 	routes.Setup(app)
 

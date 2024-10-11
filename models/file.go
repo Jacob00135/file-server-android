@@ -7,7 +7,7 @@ type File struct {
 }
 
 type DbFile struct {
-	ID         uint
-	Path       string
-	Permission uint
+	ID         uint   `json:"id"`
+	Path       string `json:"path"`
+	Permission uint   `json:"permission"`
 }

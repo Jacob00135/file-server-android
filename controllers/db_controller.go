@@ -134,14 +134,71 @@ func UpdateUserPwd(c fiber.Ctx) error {
 	})
 }
 
-func ListDirs() {
+func ListDirs(c fiber.Ctx) error {
+	dirs, err := db.DB.GetAllDir()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"dirs":    dirs,
+	})
 }
 
-func AddDir(dir string, permission uint) {
+func AddDir(c fiber.Ctx) error {
+	NewDir := struct {
+		Path       string
+		Permission uint
+	}{}
+
+	if err := c.Bind().Body(&NewDir); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Could not parse request body",
+		})
+	}
+
+	err := db.DB.InsertDir(NewDir.Path, NewDir.Permission)
+	if err != nil {
+		return c.JSON(fiber.Map{
+			"success": false,
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": fmt.Sprintf("Dir %s added", NewDir.Path),
+	})
 }
 
-func DelDir() {
+func DelDir(c fiber.Ctx) error {
+	uidStr := c.Params("id")
+	uid, err := strconv.ParseUint(uidStr, 10, 64)
+	if err != nil {
+		return c.JSON(fiber.Map{
+			"success": false,
+			"message": err.Error(),
+		})
+	}
+
+	if err := db.DB.DeleteDirById(uint(uid)); err != nil {
+		return c.JSON(fiber.Map{
+			"success": false,
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": fmt.Sprintf("Dir %s deleted", uidStr),
+	})
 }
 
 func UpdateDir() {
+	// TODO
 }

@@ -15,6 +15,7 @@ func SetupFileRoutes(app *fiber.App) {
 	app.Get("/download/:filename", controllers.DownloadFile)
 
 	app.Get("/api/index", controllers.ListFiles, middleware.FileAuth)
+	app.Get("/", controllers.WebIndex, middleware.FileAuth)
 
 	// app.Get("/api/", ListFiles)
 }
